@@ -77,7 +77,7 @@ var applicationIDs = [
   "0c1de274-e946-ee11-a81c-001dd80a648b",
 ];
 var city = "mumbai";
-var sleeper = false;
+var sleeper = true;
 
 //Don't Touch
 var serviceStarted = false;
@@ -133,15 +133,17 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
           var currentMinute = currentDateTime.getMinutes(); // Extract the minutes part
           if (sleeper) {
             if (
+              currentMinute === 59 ||
               currentMinute === 60 ||
               currentMinute === 0 ||
               currentMinute === 1 ||
               currentMinute === 2 ||
+              currentMinute === 29 ||
               currentMinute === 30 ||
               currentMinute === 31 ||
               currentMinute === 32
             ) {
-              var serviceBinaryResponse = await startService();
+              var serviceBinaryResponse = startService();
               if (serviceBinaryResponse == 1) {
                 console.log("All Done!");
                 break;
@@ -150,7 +152,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
               // console.log("Waiting!");
             }
           } else {
-            var serviceBinaryResponse = await startService();
+            var serviceBinaryResponse = startService();
             if (serviceBinaryResponse == 1) {
               console.log("All Done!");
               break;
@@ -283,7 +285,7 @@ async function startOFC(city) {
   );
   if (year == 2024) {
     //suck fuck
-    if (month == 3 && date < 10) {
+    if (month == 3 && day < 10) {
       const ofcSlotResponse = await getOFCSlot(dayID, city);
       var ofcSlotResponseSlots;
       if (ofcSlotResponse["ScheduleEntries"].length > 0) {
@@ -464,9 +466,9 @@ async function getOFCSlot(dayID, city) {
 
 async function bookOFCSlot(city, dayID, slotID) {
   const now = Date.now(); // Unix timestamp in milliseconds
-  url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/schedule-ofc-appointments-for-family&cacheString=${now()}`;
+  url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/schedule-ofc-appointments-for-family&cacheString=${now}`;
   if (isRes == "true") {
-    url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/reschedule-ofc-appointments-for-family&cacheString=${now()}`;
+    url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/reschedule-ofc-appointments-for-family&cacheString=${now}`;
   }
   const response = await fetch(url, {
     headers: {
@@ -586,9 +588,9 @@ async function getConsularSlots(consularLocation, dayID) {
 }
 async function bookConsularSlot(consularLocation, dayID, slotID) {
   const now = Date.now(); // Unix timestamp in milliseconds
-  url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/schedule-consular-appointments-for-family&cacheString=${now()}`;
+  url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/schedule-consular-appointments-for-family&cacheString=${now}`;
   if (isRes == "true") {
-    url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/reschedule-consular-appointments-for-family&cacheString=${now()}`;
+    url = `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/reschedule-consular-appointments-for-family&cacheString=${now}`;
   }
   const response = await fetch(
     `https://www.usvisascheduling.com/en-US/custom-actions/?route=/api/v1/schedule-group/schedule-consular-appointments-for-family&cacheString=${now}`,
